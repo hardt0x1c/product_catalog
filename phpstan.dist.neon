@@ -1,0 +1,10 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+    level: 8
+
+    # This parameter does not support Laravel attribute casting (e.g. it treats field casted to enum as string)
+    treatPhpDocTypesAsCertain: false
