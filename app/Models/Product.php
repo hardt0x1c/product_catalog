@@ -26,6 +26,13 @@ final class Product extends Model
     ];
 
     /**
+     * @var list<string>
+     */
+    protected $with = [
+        'category',
+    ];
+
+    /**
      * @return BelongsTo<Category, Product>
      */
     public function category(): BelongsTo
