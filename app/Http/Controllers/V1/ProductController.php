@@ -12,6 +12,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 final class ProductController extends Controller
@@ -22,8 +23,18 @@ final class ProductController extends Controller
     public function index(): ResourceCollection
     {
         $query = Product::query();
+
         $products = QueryBuilder::for($query)
             ->allowedSorts('price')
+            ->allowedFilters([
+                'price',
+                AllowedFilter::callback('category', function ($query, $value) {
+                    $query->whereHas('category', function ($query) use ($value) {
+                        $query->where('name', 'like', "%{$value}%");
+                    });
+                }),
+            ])
+            ->with('category')
             ->get();
 
         return ProductResource::collection($products);
