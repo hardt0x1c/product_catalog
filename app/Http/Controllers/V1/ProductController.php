@@ -12,6 +12,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Spatie\QueryBuilder\QueryBuilder;
 
 final class ProductController extends Controller
 {
@@ -20,7 +21,12 @@ final class ProductController extends Controller
      */
     public function index(): ResourceCollection
     {
-        return ProductResource::collection(Product::all());
+        $query = Product::query();
+        $products = QueryBuilder::for($query)
+            ->allowedSorts('price')
+            ->get();
+
+        return ProductResource::collection($products);
     }
 
     /**
