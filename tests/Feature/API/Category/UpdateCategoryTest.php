@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\User;
-
-use function Pest\Laravel\actingAs;
+use Laravel\Sanctum\Sanctum;
 
 beforeEach(function (): void {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->create(['is_admin' => 0]);
 });
 
 describe('update category', function () {
@@ -18,11 +17,24 @@ describe('update category', function () {
             'name' => 'test name',
         ];
 
-        actingAs($this->user)
-            ->patchJson(route('categories.update', ['category' => $category]), $categoryData)
-            ->assertOk()
+        Sanctum::actingAs(User::factory()->create(['is_admin' => 1]), ['*']);
+
+        $response = $this->patchJson(route('categories.update', ['category' => $category]), $categoryData);
+        $response->assertOk()
             ->assertJsonFragment([
                 'name' => 'test name',
             ]);
+    });
+
+    it('does not allow non-admin to update a category', function () {
+        $category = Category::factory()->create();
+        $categoryData = [
+            'name' => 'test name',
+        ];
+
+        Sanctum::actingAs($this->user, ['*']);
+
+        $response = $this->patchJson(route('categories.update', ['category' => $category]), $categoryData);
+        $response->assertForbidden();
     });
 });
