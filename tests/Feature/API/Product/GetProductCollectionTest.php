@@ -7,7 +7,7 @@ use App\Models\Product;
 
 use function Pest\Laravel\getJson;
 
-describe('index category', function () {
+describe('index products', function () {
     it('returns a collection of products', function () {
         $products = Product::factory()->count(5)->create();
 

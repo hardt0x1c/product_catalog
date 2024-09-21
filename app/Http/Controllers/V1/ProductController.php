@@ -10,6 +10,7 @@ use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -36,6 +37,14 @@ final class ProductController extends Controller
             ])
             ->with('category')
             ->get();
+
+        return ProductResource::collection($products);
+    }
+
+    public function search(Request $request): ResourceCollection
+    {
+        $query = $request->input('q');
+        $products = Product::where('name', 'LIKE', '%'.$query.'%')->get();
 
         return ProductResource::collection($products);
     }
