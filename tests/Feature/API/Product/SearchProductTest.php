@@ -27,5 +27,5 @@ describe('search product', function () {
             ->assertJsonFragment([
                 'name' => 'Молоко',
             ]);
-    })->only();
+    });
 });
