@@ -24,7 +24,7 @@ final class ProductController extends Controller
      */
     public function index(Request $request): ResourceCollection
     {
-        Gate::authorize('viewAny', Category::class);
+        Gate::authorize('viewAny', Product::class);
 
         $query = Product::query();
 
@@ -47,7 +47,7 @@ final class ProductController extends Controller
 
     public function search(Request $request): ResourceCollection
     {
-        Gate::authorize('viewAny', Category::class);
+        Gate::authorize('viewAny', Product::class);
 
         $query = $request->input('q');
         $products = Product::where('name', 'LIKE', '%'.$query.'%')->get();
@@ -70,7 +70,7 @@ final class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): ProductResource
     {
-        Gate::authorize('create', Category::class);
+        Gate::authorize('create', Product::class);
 
         $validated = $request->except('category_id');
 

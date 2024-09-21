@@ -48,20 +48,4 @@ final class ProductPolicy
     {
         return $user->is_admin;
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Product $product): bool
-    {
-        return $user->is_admin;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Product $product): bool
-    {
-        return $user->is_admin;
-    }
 }

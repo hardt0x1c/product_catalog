@@ -3,8 +3,14 @@
 declare(strict_types=1);
 
 use App\Models\Product;
+use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
+
+beforeEach(function (): void {
+    $this->user = User::factory()->create();
+});
 
 describe('search product', function () {
     it('returns products', function () {
@@ -15,6 +21,8 @@ describe('search product', function () {
             ['name' => 'Помидор'],
             ['name' => 'Огурец'],
         ]);
+
+        Sanctum::actingAs($this->user, ['*']);
 
         getJson(route('products.search', ['q' => 'Молоко']))
             ->assertOk()
@@ -27,5 +35,10 @@ describe('search product', function () {
             ->assertJsonFragment([
                 'name' => 'Молоко',
             ]);
+    });
+
+    it('does not allow non-authenticated to search products', function () {
+        getJson(route('products.search', ['q' => 'Молоко']))
+            ->assertUnauthorized();
     });
 });
