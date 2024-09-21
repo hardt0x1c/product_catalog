@@ -109,4 +109,12 @@ describe('index products', function () {
             ->assertJsonFragment(['name' => 'Морковь'])
             ->assertJsonMissing(['name' => 'Яблоко']);
     });
+
+    it('returns paginated a collection of products', function () {
+        $products = Product::factory()->count(30)->create();
+
+        getJson(route('products.index', ['per_page' => 10]))
+            ->assertOk()
+            ->assertJsonCount(10, 'data');
+    });
 });
