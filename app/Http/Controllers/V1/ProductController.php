@@ -21,7 +21,7 @@ final class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
         $query = Product::query();
 
@@ -36,7 +36,8 @@ final class ProductController extends Controller
                 }),
             ])
             ->with('category')
-            ->get();
+            ->paginate($request->input('per_page', 15))
+            ->appends($request->query());
 
         return ProductResource::collection($products);
     }
