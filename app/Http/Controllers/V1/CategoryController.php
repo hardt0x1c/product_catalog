@@ -12,6 +12,7 @@ use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 final class CategoryController extends Controller
 {
@@ -20,6 +21,8 @@ final class CategoryController extends Controller
      */
     public function index(): ResourceCollection
     {
+        Gate::authorize('viewAny', Category::class);
+
         return CategoryResource::collection(Category::all());
     }
 
@@ -28,6 +31,8 @@ final class CategoryController extends Controller
      */
     public function show(Category $category): CategoryResource
     {
+        Gate::authorize('view', $category);
+
         return new CategoryResource($category);
     }
 
@@ -36,6 +41,8 @@ final class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request): CategoryResource
     {
+        Gate::authorize('create', Category::class);
+
         $validated = $request->validated();
         $category = Category::create($validated);
 
@@ -47,6 +54,8 @@ final class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category): CategoryResource|JsonResponse
     {
+        Gate::authorize('update', $category);
+
         $validated = $request->validated();
         $category->update($validated);
 
@@ -58,6 +67,8 @@ final class CategoryController extends Controller
      */
     public function destroy(Category $category): Response
     {
+        Gate::authorize('delete', $category);
+
         $category->deleteOrFail();
 
         return response()->noContent();

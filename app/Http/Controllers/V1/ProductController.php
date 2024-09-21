@@ -13,6 +13,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -23,6 +24,8 @@ final class ProductController extends Controller
      */
     public function index(Request $request): ResourceCollection
     {
+        Gate::authorize('viewAny', Category::class);
+
         $query = Product::query();
 
         $products = QueryBuilder::for($query)
@@ -44,6 +47,8 @@ final class ProductController extends Controller
 
     public function search(Request $request): ResourceCollection
     {
+        Gate::authorize('viewAny', Category::class);
+
         $query = $request->input('q');
         $products = Product::where('name', 'LIKE', '%'.$query.'%')->get();
 
@@ -55,6 +60,8 @@ final class ProductController extends Controller
      */
     public function show(Product $product): ProductResource
     {
+        Gate::authorize('view', $product);
+
         return new ProductResource($product);
     }
 
@@ -63,6 +70,8 @@ final class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): ProductResource
     {
+        Gate::authorize('create', Category::class);
+
         $validated = $request->except('category_id');
 
         $category = Category::findOrFail($request->input('category_id'));
@@ -83,6 +92,8 @@ final class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product): ProductResource
     {
+        Gate::authorize('update', $product);
+
         $validated = $request->validated();
         $product->update($validated);
 
@@ -94,6 +105,8 @@ final class ProductController extends Controller
      */
     public function destroy(Product $product): Response
     {
+        Gate::authorize('delete', $product);
+
         $product->deleteOrFail();
 
         return response()->noContent();
