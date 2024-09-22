@@ -17,7 +17,28 @@ use Illuminate\Support\Facades\Gate;
 final class CategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/categories",
+     *     summary="Get a list of categories",
+     *     tags={"Categories"},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful request",
+     *
+     *         @OA\JsonContent(
+     *             type="array",
+     *
+     *             @OA\Items(ref="#/components/schemas/Category")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function index(): ResourceCollection
     {
@@ -27,7 +48,37 @@ final class CategoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/categories/{category}",
+     *     summary="Get a single category",
+     *     tags={"Categories"},
+     *
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="path",
+     *         required=true,
+     *         description="Category ID",
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful request",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Category not found"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function show(Category $category): CategoryResource
     {
@@ -37,7 +88,34 @@ final class CategoryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/categories",
+     *     summary="Create a new category",
+     *     tags={"Categories"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="Category successfully created",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function store(StoreCategoryRequest $request): CategoryResource
     {
@@ -50,7 +128,43 @@ final class CategoryController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/categories/{category}",
+     *     summary="Update an existing category",
+     *     tags={"Categories"},
+     *
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="path",
+     *         required=true,
+     *         description="Category ID",
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category successfully updated",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function update(UpdateCategoryRequest $request, Category $category): CategoryResource|JsonResponse
     {
@@ -63,7 +177,38 @@ final class CategoryController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/categories/{category}",
+     *     summary="Delete a category",
+     *     tags={"Categories"},
+     *
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="path",
+     *         required=true,
+     *         description="Category ID",
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=204,
+     *         description="Category successfully deleted"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Category not found"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function destroy(Category $category): Response
     {

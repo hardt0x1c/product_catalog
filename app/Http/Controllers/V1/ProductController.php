@@ -20,7 +20,36 @@ use Spatie\QueryBuilder\QueryBuilder;
 final class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/products",
+     *     summary="Get a list of products",
+     *     tags={"Products"},
+     *
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Number of products per page",
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful request",
+     *
+     *         @OA\JsonContent(
+     *             type="array",
+     *
+     *             @OA\Items(ref="#/components/schemas/Product")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function index(Request $request): ResourceCollection
     {
@@ -45,6 +74,38 @@ final class ProductController extends Controller
         return ProductResource::collection($products);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/products/search",
+     *     summary="Search products by name",
+     *     tags={"Products"},
+     *
+     *     @OA\Parameter(
+     *         name="q",
+     *         in="query",
+     *         description="Query string for product search",
+     *
+     *         @OA\Schema(type="string")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful request",
+     *
+     *         @OA\JsonContent(
+     *             type="array",
+     *
+     *             @OA\Items(ref="#/components/schemas/Product")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
+     */
     public function search(Request $request): ResourceCollection
     {
         Gate::authorize('viewAny', Product::class);
@@ -56,7 +117,37 @@ final class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/products/{product}",
+     *     summary="Get a single product",
+     *     tags={"Products"},
+     *
+     *     @OA\Parameter(
+     *         name="product",
+     *         in="path",
+     *         required=true,
+     *         description="Product ID",
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful request",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function show(Product $product): ProductResource
     {
@@ -66,7 +157,34 @@ final class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/products",
+     *     summary="Create a new product",
+     *     tags={"Products"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="Product successfully created",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function store(StoreProductRequest $request): ProductResource
     {
@@ -88,7 +206,43 @@ final class ProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/products/{product}",
+     *     summary="Update an existing product",
+     *     tags={"Products"},
+     *
+     *     @OA\Parameter(
+     *         name="product",
+     *         in="path",
+     *         required=true,
+     *         description="Product ID",
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product successfully updated",
+     *
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function update(UpdateProductRequest $request, Product $product): ProductResource
     {
@@ -101,7 +255,38 @@ final class ProductController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/products/{product}",
+     *     summary="Delete a product",
+     *     tags={"Products"},
+     *
+     *     @OA\Parameter(
+     *         name="product",
+     *         in="path",
+     *         required=true,
+     *         description="Product ID",
+     *
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=204,
+     *         description="Product successfully deleted"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found"
+     *     ),
+     *     security={{"sanctum": {}}}
+     * )
      */
     public function destroy(Product $product): Response
     {
